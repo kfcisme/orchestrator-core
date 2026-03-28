@@ -5,11 +5,11 @@ import java.util.*;
 import java.util.function.Function;
 
 public class Planner {
-    private final Map<String, Double> costCpu;      // 類型→CPU 成本/人
-    private final Map<String, Double> costRamMb;    // 類型→RAM 成本/人（MB）
-    public double migratePenalty = 0.5;             // 遷移懲罰
-    public double allowOver = 0.05;                 // 允許輕微超量
-    public double wCpu = 0.6, wRam = 0.4;           // 評分權重
+    private final Map<String, Double> costCpu;
+    private final Map<String, Double> costRamMb;
+    public double migratePenalty = 0.5;
+    public double allowOver = 0.05;
+    public double wCpu = 0.6, wRam = 0.4;
 
     public Planner(Map<String, Double> unitCostCpu, Map<String, Double> unitCostRamMb) {
         this.costCpu = unitCostCpu;
@@ -29,7 +29,6 @@ public class Planner {
             bins.put(s, b);
         }
 
-        // 由“重”到“輕”排；你也可改 max(uCpu, uRam/100) 做排序基準
         players.sort((a, b) -> Double.compare(maxCost(b), maxCost(a)));
 
         Map<String, String> plan = new HashMap<>();
@@ -51,7 +50,6 @@ public class Planner {
             }
 
             if (best == null) {
-                // 硬塞到綜合負載最低的 bin
                 best = bins.values().stream()
                         .min(Comparator.comparingDouble(b ->
                                 wCpu * (b.cpuLoad / Math.max(1e-6, b.cpuCap)) +

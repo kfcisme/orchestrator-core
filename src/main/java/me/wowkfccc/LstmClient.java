@@ -11,7 +11,7 @@ public class LstmClient {
         this.base = base.endsWith("/")? base.substring(0, base.length()-1): base;
         this.timeout = timeoutMs;
     }
-    public double[] forecastNext(double[] p){ // baseline：單點也能回傳
+    public double[] forecastNext(double[] p){
         try{
             String body = "{\"server_id\":\"all\",\"comp_seq\":["+toCsv(p)+"],\"horizon\":1}";
             HttpRequest req = HttpRequest.newBuilder(URI.create(base+"/forecast_next_comp"))
@@ -20,7 +20,7 @@ public class LstmClient {
                     .POST(HttpRequest.BodyPublishers.ofString(body)).build();
             String res = http.send(req, HttpResponse.BodyHandlers.ofString()).body();
             return parseFirstVector(res);
-        }catch(Exception e){ return p; } // fallback 原樣
+        }catch(Exception e){ return p; }
     }
     private static String toCsv(double[] a){
         StringBuilder sb = new StringBuilder(); for(int i=0;i<a.length;i++){ if(i>0) sb.append(','); sb.append(String.format(java.util.Locale.US,"%.6f",a[i])); }
